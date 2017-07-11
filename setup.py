@@ -15,4 +15,4 @@ setup(name='padded_sel',
                    'Programming Language :: Python :: 3.3',
                    'Programming Language :: Python :: 3.4',
                    'Programming Language :: Python :: 3.5'],
-      zip_safe=False)
+      zip_safe=False, install_requires=['selenium'])
