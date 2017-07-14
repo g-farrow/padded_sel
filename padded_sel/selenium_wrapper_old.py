@@ -1,28 +1,5 @@
 
 
-## switch window
-def selectWindowByName(testData, windowName):
-    driver = testData['driver']
-    logger = testData['logger']
-    try:
-        for handle in driver.window_handles:
-            driver.switch_to_window(handle)
-            title = driver.title
-            if title == windowName:
-                logger.info("Window found")
-                return "PASSED"
-        logger.failed("Couldn't find window '%s'" % windowName)
-        actionsOnFail.exitTestScriptGracefully(testData)
-    #		driver.switch_to_window( windowName )
-    except Exception as e:
-        logger.failed(str(e))
-        logger.failed("Error selecting window '%s'" % windowName)
-        actionsOnFail.exitTestScriptGracefully(testData)
-
-
-
-
-
 ## send keys
 def sendKeysByTinyMCE(testData, text):
     driver = testData['driver']

@@ -197,6 +197,13 @@ class Webdriver:
         self.driver.find_element_by_css_selector(element_css).send_keys(text)
         logger.debug("The phrase '{}' was sent to (CSS) '{}'".format(text, element_css))
 
+    def send_keys_to_active_tinymce_widget(self, text):
+        """
+        Enter text into a *selected* TinyMCE (type of WYSIWYG text entry field).
+        :param text: String - The text you wish to enter into the field
+        """
+        self.driver.execute_script("tinyMCE.activeEditor.selection.setContent('{}')".format(text))
+
     def clear_content_by_id(self, element_id):
         """
         Remove the text from an element based on it's 'id' attribute
