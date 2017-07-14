@@ -1,26 +1,3 @@
-## switch frame
-def selectFrame(testData, frame):
-    driver = testData['driver']
-    logger = testData['logger']
-    try:
-        driver.switch_to_frame(frame)
-        return "PASSED"
-    except Exception as e:
-        logger.error(str(e))
-        logger.error("Error selecting iframe '%s'" % frame)
-        actionsOnFail.exitTestScriptGracefully(testData)
-
-
-def switchBackToDefault(testData):
-    driver = testData['driver']
-    logger = testData['logger']
-    try:
-        driver.switch_to_default_content()
-        return "PASSED"
-    except Exception as e:
-        logger.error(str(e))
-        logger.error("Error selecting the default content")
-        actionsOnFail.exitTestScriptGracefully(testData)
 
 
 ## switch window

@@ -102,6 +102,34 @@ class Webdriver:
         sleep(float(seconds))
         logger.debug("Paused for {} seconds. Continuing...".format(seconds))
 
+    def switch_to_window(self, window_name):
+        """
+        Switches focus to the specified window.
+        :param window_name: The name or window handle of the window to switch to.
+        """
+        self.driver.switch_to.window(window_name)
+
+    def switch_to_iframe(self, frame_reference):
+        """
+        Switch focus to the specified iframe
+        :param frame_reference: The name of the window to switch to, an integer representing the index, or a webelement
+                                that is an (i)frame to switch to.
+        """
+        self.driver.switch_to.frame(frame_reference)
+
+    def switch_to_default_frame(self):
+        """
+        Switch focus to the default frame.
+        """
+        self.driver.switch_to.default_content()
+
+    def switch_to_alert(self):
+        """
+        Switch to an alert on the page, return the Alert object
+        :return: Alert object
+        """
+        return self.driver.switch_to.alert()
+
     def is_text_present_on_page(self, text):
         """
         Search for the presence of text on he current page
@@ -113,6 +141,13 @@ class Webdriver:
             return True
         logger.debug("Test '{}' is NOT present on the page".format(text))
         return False
+
+    def get_active_element(self):
+        """
+        Returns the element with focus, or BODY if nothing has focus.
+        :return: WebElement object which currently has focus
+        """
+        return self.driver.switch_to.active_element
 
     def send_keys_by_id(self, element_id, text, append=False):
         """
@@ -975,9 +1010,9 @@ class Webdriver:
 browser = Webdriver()
 browser.goto("http://www.bing.com")
 browser.send_keys_by_id('sb_form_q', 'how to write selenium tests')
-browser.pause(2)
 browser.click_by_id('sb_form_go')
-browser.pause(2)
+browser.wait_for_element_present_by_link_text('Selenium Tutorial For Beginners - Tutorial 1 - Appvance')
 browser.click_by_link_text('Selenium Tutorial For Beginners - Tutorial 1 - Appvance')
 browser.pause(1)
+print(browser.get_active_element())
 browser.quit()
