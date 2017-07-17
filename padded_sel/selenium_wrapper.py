@@ -3,6 +3,7 @@ import logging
 from selenium import webdriver
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException, NoSuchAttributeException
 
 logging.basicConfig(level=logging.DEBUG, format='[%(asctime)s] [%(module)s] [%(levelname)s] %(message)s',
@@ -637,16 +638,16 @@ class Webdriver:
         logger.debug("Waiting for (CSS) '{}' to have value={}".format(element_css, value))
         return self._wait_for_attribute_value(self.driver.find_element_by_css_selector(element_css), "value", value, timeout)
 
-    def _is_element_present(self, identifier_type, type_value):
+    def _is_element_present(self, identifier_type, identifier_value):
         """
         Assert the presence (or lack thereof) of a specified WebElement object
         :param identifier_type: String - A selenium "By" object
-        :param type_value: The value of the identifier to look for
+        :param identifier_value: The value of the identifier to look for
         :return: Boolean
         """
         try:
-            self.driver.find_element(identifier_type, type_value)
-            logger.debug("Element {}={} found".format(identifier_type, type_value))
+            self.driver.find_element(identifier_type, identifier_value)
+            logger.debug("Element {}={} found".format(identifier_type, identifier_value))
             return True
         except NoSuchElementException:
             return False
@@ -699,20 +700,20 @@ class Webdriver:
         """
         return self._is_element_present(By.CSS_SELECTOR, element_css)
 
-    def _wait_for_element_present(self, identifier_type, type_value, timeout):
+    def _wait_for_element_present(self, identifier_type, identifier_value, timeout):
         """
         Wait for an element to have a specified attribute-value pairing, based on it's 'id' attribute
         :param identifier_type: String - A selenium "By" object
-        :param type_value: The value of the identifier to look for
+        :param identifier_value: The value of the identifier to look for
         :param timeout: Int - The maximum amount of time to wait for the attribute (seconds)
         """
-        logger.debug("Waiting for element {}={} to be present".format(identifier_type, type_value))
+        logger.debug("Waiting for element {}={} to be present".format(identifier_type, identifier_value))
         from time import sleep
         for i in range(int(timeout)):
-            if self._is_element_present(identifier_type, type_value):
+            if self._is_element_present(identifier_type, identifier_value):
                 return True
             sleep(1)
-        logger.warning("Element {}={} was not found within the timeout ({} seconds)".format(identifier_type, type_value, timeout))
+        logger.warning("Element {}={} was not found within the timeout ({} seconds)".format(identifier_type, identifier_value, timeout))
         return False
 
     def wait_for_element_present_by_id(self, element_id, timeout=10):
@@ -763,23 +764,23 @@ class Webdriver:
         """
         return self._wait_for_element_present(By.LINK_TEXT, partial_link_text, timeout)
 
-    def _wait_for_element_not_present(self, identifier_type, type_value, timeout):
+    def _wait_for_element_not_present(self, identifier_type, identifier_value, timeout):
         """
         Wait for an element to have a specified attribute-value pairing, based on it's 'id' attribute
         :param identifier_type: A selenium "By" object
-        :param type_value: The value of the identifier to look for
+        :param identifier_value: The value of the identifier to look for
         :param timeout: Int - The maximum amount of time to wait for the attribute (seconds)
         """
-        logger.debug("Waiting for element {}={} to disappear".format(identifier_type, type_value))
+        logger.debug("Waiting for element {}={} to disappear".format(identifier_type, identifier_value))
         from time import sleep
         for i in range(int(timeout)):
             try:
                 self.driver.find_element_by_id()
             except NoSuchElementException:
-                logger.debug("Element {}={} no longer present".format(identifier_type, type_value))
+                logger.debug("Element {}={} no longer present".format(identifier_type, identifier_value))
                 return True
             sleep(1)
-        logger.warning("Element {}={} was present for the entire timeout ({} seconds)".format(identifier_type, type_value, timeout))
+        logger.warning("Element {}={} was present for the entire timeout ({} seconds)".format(identifier_type, identifier_value, timeout))
         return False
 
     def wait_for_element_not_present_by_id(self, element_id, timeout=10):
@@ -830,20 +831,20 @@ class Webdriver:
         """
         return self._wait_for_element_not_present(By.LINK_TEXT, partial_link_text, timeout)
 
-    def _is_element_visible(self, identifier_type, type_value):
+    def _is_element_visible(self, identifier_type, identifier_value):
         """
         Identify whether or not an element is currently visible within the browser window
         :param identifier_type: A selenium "By" object
-        :param type_value: The value of the identifier to look for
+        :param identifier_value: The value of the identifier to look for
         :return: Boolean - True for element is displayed, False if not
         """
         try:
-            if self.driver.find_element(identifier_type, type_value).is_displayed():
-                logger.debug("Element {}={} is now visible on the screen".format(identifier_type, type_value))
+            if self.driver.find_element(identifier_type, identifier_value).is_displayed():
+                logger.debug("Element {}={} is now visible on the screen".format(identifier_type, identifier_value))
                 return True
-            logger.debug("Element {}={} is not visible on the screen".format(identifier_type, type_value))
+            logger.debug("Element {}={} is not visible on the screen".format(identifier_type, identifier_value))
         except NoSuchElementException:
-            logger.warning("Element {}={} cannot be found!".format(identifier_type, type_value))
+            logger.warning("Element {}={} cannot be found!".format(identifier_type, identifier_value))
             return False
 
     def is_element_visible_by_id(self, element_id):
@@ -894,20 +895,20 @@ class Webdriver:
         """
         return self._is_element_visible(By.CSS_SELECTOR, element_css)
 
-    def _scroll_down_to_element(self, identifier_type, type_value):
+    def _scroll_down_to_element(self, identifier_type, identifier_value):
         """
         Scroll down to until a specified element is displayed on the screen
         :param identifier_type: A selenium "By" object
-        :param type_value: The value of the identifier to look for
+        :param identifier_value: The value of the identifier to look for
         """
         while not browser.driver.execute_script("if((window.innerHeight+window.scrollY)>=document.body.offsetHeight)"
                                                 "{return true;}else{return false}"):
             # While the browser is NOT scrolled to the bottom of the page
-            if self._is_element_visible(identifier_type, type_value):
+            if self._is_element_visible(identifier_type, identifier_value):
                 return True
             self.driver.execute_script("window.scrollTo(0, window.innerHeight);")
         logger.warning("The page has been scrolled to the bottom, but the element {}={} was never "
-                       "visible".format(identifier_type, type_value))
+                       "visible".format(identifier_type, identifier_value))
         return False
 
     def scroll_down_to_element_by_id(self, element_id):
@@ -970,16 +971,16 @@ class Webdriver:
         logger.debug("Count of elements matching CSS '{}' is ".format(self.driver.find_elements_by_css_selector(css_selector)))
         return self.driver.find_elements_by_css_selector(css_selector)
 
-    def _is_element_selected(self, identifier_type, type_value):
+    def _is_element_selected(self, identifier_type, identifier_value):
         """
         Assert whether or not a WebElement object is 'selected'
         :param identifier_type: A selenium "By" object
-        :param type_value: The value of the identifier to look for
+        :param identifier_value: The value of the identifier to look for
         """
-        logger.debug("Element {}={} selection state is '{}'".format(identifier_type, type_value,
+        logger.debug("Element {}={} selection state is '{}'".format(identifier_type, identifier_value,
                                                                     self.driver.find_element(identifier_type,
-                                                                                             type_value).is_selected()))
-        return self.driver.find_element(identifier_type, type_value).is_selected()
+                                                                                             identifier_value).is_selected()))
+        return self.driver.find_element(identifier_type, identifier_value).is_selected()
 
     def is_element_selected_by_id(self, element_id):
         """
@@ -1013,13 +1014,149 @@ class Webdriver:
         """
         return self._is_element_selected(By.CSS_SELECTOR, element_css)
 
+    def _select_an_element(self, identifier_type, identifier_value):
+        """
+        'Select' a WebElement
+        :param identifier_type: A selenium "By" object
+        :param identifier_value: The value of the identifier to look for
+        :return: WebElement object
+        """
+        return Select(self.driver.find_element(identifier_type, identifier_value))
 
-browser = Webdriver()
-browser.goto("http://www.bing.com")
-browser.send_keys_by_id('sb_form_q', 'how to write selenium tests')
-browser.click_by_id('sb_form_go')
-browser.wait_for_element_present_by_link_text('Selenium Tutorial For Beginners - Tutorial 1 - Appvance')
-browser.click_by_link_text('Selenium Tutorial For Beginners - Tutorial 1 - Appvance')
-browser.pause(1)
-print(browser.get_active_element())
-browser.quit()
+    def _select_option_from_drop_down_using_visible_text(self, identifier_type, identifier_value, choice_text):
+        """
+        Select a given option from a drop down menu
+        :param identifier_type: A selenium "By" object
+        :param identifier_value: The value of the identifier to look for
+        :param choice_text: Visible text of the required option
+        """
+        select = self._select_an_element(identifier_type, identifier_value)
+        select.select_by_visible_text(choice_text)
+
+    def _select_option_from_drop_down_using_value(self, identifier_type, identifier_value, choice_value):
+        """
+        Select a given option from a drop down menu
+        :param identifier_type: A selenium "By" object
+        :param identifier_value: The value of the identifier to look for
+        :param choice_value: 'Value' attribute's value of the required option
+        """
+        select = self._select_an_element(identifier_type, identifier_value)
+        select.select_by_value(choice_value)
+
+    def _select_option_from_drop_down_using_index(self, identifier_type, identifier_value, choice_index):
+        """
+        Select a given option from a drop down menu
+        :param identifier_type: A selenium "By" object
+        :param identifier_value: The value of the identifier to look for
+        :param choice_index: Index of the required option (i.e. position in the list)
+        """
+        select = self._select_an_element(identifier_type, identifier_value)
+        select.select_by_index(choice_index)
+
+    def select_option_from_drop_down_using_visible_text_by_id(self, element_id, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's visible text
+        :param element_id: String - the id of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_visible_text(By.ID, element_id, choice_text)
+
+    def select_option_from_drop_down_using_visible_text_by_xpath(self, xpath, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's visible text
+        :param xpath: String - the xpath of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_visible_text(By.XPATH, xpath, choice_text)
+
+    def select_option_from_drop_down_using_visible_text_by_name(self, element_name, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's visible text
+        :param element_name: String - the name of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_visible_text(By.NAME, element_name, choice_text)
+
+    def select_option_from_drop_down_using_visible_text_by_css(self, element_css, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's visible text
+        :param element_css: String - the CSS of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_visible_text(By.CSS_SELECTOR, element_css, choice_text)
+
+    def select_option_from_drop_down_using_value_by_id(self, element_id, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's value attribute
+        :param element_id: String - the id of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_value(By.ID, element_id, choice_text)
+
+    def select_option_from_drop_down_using_value_by_xpath(self, xpath, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's value attribute
+        :param xpath: String - the xpath of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_value(By.XPATH, xpath, choice_text)
+
+    def select_option_from_drop_down_using_value_by_name(self, element_name, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's value attribute
+        :param element_name: String - the name of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_value(By.NAME, element_name, choice_text)
+
+    def select_option_from_drop_down_using_value_by_css(self, element_css, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's value attribute
+        :param element_css: String - the CSS of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_value(By.CSS_SELECTOR, element_css, choice_text)
+
+    def select_option_from_drop_down_using_index_by_id(self, element_id, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's index
+        :param element_id: String - the id of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_index(By.ID, element_id, choice_text)
+
+    def select_option_from_drop_down_using_index_by_xpath(self, xpath, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's index
+        :param xpath: String - the xpath of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_index(By.XPATH, xpath, choice_text)
+
+    def select_option_from_drop_down_using_index_by_name(self, element_name, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's index
+        :param element_name: String - the name of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_index(By.NAME, element_name, choice_text)
+
+    def select_option_from_drop_down_using_index_by_css(self, element_css, choice_text):
+        """
+        Given the id of a drop down element, select an option from it, based on the option's index
+        :param element_css: String - the CSS of the element to look for
+        :param choice_text: String - the text to select from the drop down
+        :return:
+        """
+        self._select_option_from_drop_down_using_index(By.CSS_SELECTOR, element_css, choice_text)
