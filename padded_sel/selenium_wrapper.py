@@ -21,8 +21,7 @@ class Webdriver:
         :param server_url: String - IP/DNS of the Selenium server to start the browser on
         :param server_port: Int - Port number of the Selenium server to start the browser on
         :param proxy: String - The IP/DNS and port (: separated) of a proxy server to forward traffic through
-        :param window_size: String - Desired dimensions of the browser window width by height separated by 'x'
-            (e.g. "1900x1200")
+        :param window_size: String - Desired dimensions of the browser window width by height separated by 'x' (e.g. "1900x1200")
         :param persist_cookies: Boolean - Set to True to prevent deletion of existing cookies at startup of browser
         """
         self.capabilities = {'browserName': browser_name.lower(), 'platform': platform.upper()}
@@ -58,8 +57,7 @@ class Webdriver:
     def set_window_size(self, window_size=None):
         """
         Change the size/resolution of the browser window, defaults to 'maximum'
-        :param window_size: String - Desired dimensions of the browser window width by height separated by 'x'
-            (e.g. "1900x1200")
+        :param window_size: String - Desired dimensions of the browser window width by height separated by 'x' (e.g. "1900x1200")
         """
         if window_size:
             browser_resolution = window_size.split("x")
@@ -113,8 +111,7 @@ class Webdriver:
     def switch_to_iframe(self, frame_reference):
         """
         Switch focus to the specified iframe
-        :param frame_reference: The name of the window to switch to, an integer representing the index, or a webelement
-                                that is an (i)frame to switch to.
+        :param frame_reference: The name of the window to switch to, an integer representing the index, or a webelement that is an (i)frame to switch to.
         """
         self.driver.switch_to.frame(frame_reference)
 
