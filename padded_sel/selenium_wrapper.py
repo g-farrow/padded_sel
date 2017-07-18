@@ -16,13 +16,14 @@ class Webdriver:
                  window_size=None, persist_cookies=None):
         """
         Initialise the Webdriver and return the class object, as per the provided requirements:
-        :param browser_name: String - Browser required (e.g. firefox)
-        :param platform: String - OS required (e.g. linux)
-        :param server_url: String - IP/DNS of the Selenium server to start the browser on
-        :param server_port: Int - Port number of the Selenium server to start the browser on
-        :param proxy: String - The IP/DNS and port (: separated) of a proxy server to forward traffic through
-        :param window_size: String - Desired dimensions of the browser window width by height separated by 'x' (e.g. "1900x1200")
-        :param persist_cookies: Boolean - Set to True to prevent deletion of existing cookies at startup of browser
+        :Args:
+        - :param browser_name: String - Browser required (e.g. firefox)
+        - :param platform: String - OS required (e.g. linux)
+        - :param server_url: String - IP/DNS of the Selenium server to start the browser on
+        - :param server_port: Int - Port number of the Selenium server to start the browser on
+        - :param proxy: String - The IP/DNS and port (: separated) of a proxy server to forward traffic through
+        - :param window_size: String - Desired dimensions of the browser window width by height separated by 'x' (e.g. "1900x1200")
+        - :param persist_cookies: Boolean - Set to True to prevent deletion of existing cookies at startup of browser
         """
         self.capabilities = {'browserName': browser_name.lower(), 'platform': platform.upper()}
         self.command_executor = "http://{}:{}/wd/hub".format(server_url, server_port)
