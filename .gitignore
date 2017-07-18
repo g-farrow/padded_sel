@@ -102,3 +102,4 @@ ENV/
 
 #JetBrains
 .idea/
+!/docs/_build/
