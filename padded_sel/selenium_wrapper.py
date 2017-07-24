@@ -23,10 +23,13 @@ class Webdriver:
     - :param window_size: String - Desired dimensions of the browser window width by height separated by 'x' (e.g. "1900x1200")
     - :param persist_cookies: Boolean - Set to True to prevent deletion of existing cookies at startup of browser
     """
-    def __init__(self, browser_name='firefox', platform='linux', server_url='127.0.0.1', server_port=4444, proxy=None,
+    def __init__(self, browser_name='firefox', platform='linux', server_url=None, server_port=4444, proxy=None,
                  window_size=None, persist_cookies=None):
         self.capabilities = {'browserName': browser_name.lower(), 'platform': platform.upper()}
-        self.command_executor = "http://{}:{}/wd/hub".format(server_url, server_port)
+        if server_url:
+            self.command_executor = "http://{}:{}/wd/hub".format(server_url, server_port)
+        else:
+            self.command_executor = None
         self.window_size = window_size
         self.proxy = proxy
         if self.proxy:
@@ -34,8 +37,15 @@ class Webdriver:
                 {'proxyType': ProxyType.MANUAL, 'httpProxy': proxy, 'ftpProxy': proxy, 'sslProxy': proxy}
             )
             logger.debug('Browser is set to use a proxy server at {}'.format(self.proxy))
-        self.driver = webdriver.Remote(desired_capabilities=self.capabilities, command_executor=self.command_executor,
-                                       proxy=proxy)
+        # self.driver = webdriver.Remote(desired_capabilities=self.capabilities, command_executor=self.command_executor,
+        #                                proxy=proxy)
+        if browser_name.lower() == 'chrome':
+            self.driver = webdriver.Chrome()
+        elif browser_name.lower() == 'firefox':
+            self.driver = webdriver.Firefox()
+        else:
+            # Default to the Firefox browser
+            self.driver = webdriver.Firefox()
         logger.info('{} browser initialised successfully'.format(browser_name))
         if not persist_cookies:
             self.delete_all_cookies()

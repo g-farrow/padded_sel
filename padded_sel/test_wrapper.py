@@ -27,8 +27,8 @@ class WebdriverBaseTest(unittest.TestCase):
     @classmethod
     @read_browser_config("padded_sel.json")
     def setUpClass(cls, **kwargs):
-        cls.driver = Webdriver(**kwargs)
         logger.debug(kwargs)
+        cls.driver = Webdriver()
 
     @classmethod
     def tearDownClass(cls):
