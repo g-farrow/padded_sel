@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class Webdriver:
     """
     The 'browser' with which to execute our commands and generally interact
-    :Args:
+    :Args
     - :param browser_name: String - Browser required (e.g. firefox)
     - :param platform: String - OS required (e.g. linux)
     - :param server_url: String - IP/DNS of the Selenium server to start the browser on
@@ -37,7 +37,7 @@ class Webdriver:
         # self.driver = webdriver.Remote(desired_capabilities=self.capabilities, command_executor=self.command_executor,
         #                                proxy=proxy)
         self.driver = webdriver.Firefox()
-        logger.info('Browser initialised successfully')
+        logger.info('{} browser initialised successfully'.format(browser_name))
         if not persist_cookies:
             self.delete_all_cookies()
         self.set_window_size(self.window_size)
