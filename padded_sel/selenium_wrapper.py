@@ -34,9 +34,8 @@ class Webdriver:
                 {'proxyType': ProxyType.MANUAL, 'httpProxy': proxy, 'ftpProxy': proxy, 'sslProxy': proxy}
             )
             logger.debug('Browser is set to use a proxy server at {}'.format(self.proxy))
-        # self.driver = webdriver.Remote(desired_capabilities=self.capabilities, command_executor=self.command_executor,
-        #                                proxy=proxy)
-        self.driver = webdriver.Firefox()
+        self.driver = webdriver.Remote(desired_capabilities=self.capabilities, command_executor=self.command_executor,
+                                       proxy=proxy)
         logger.info('{} browser initialised successfully'.format(browser_name))
         if not persist_cookies:
             self.delete_all_cookies()

@@ -5,3 +5,4 @@ padded_sel
    :maxdepth: 4
 
    selenium_wrapper
+   test_wrapper
