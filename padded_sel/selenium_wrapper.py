@@ -26,10 +26,6 @@ class Webdriver:
     def __init__(self, browser_name='firefox', platform='linux', server_url=None, server_port=4444, proxy=None,
                  window_size=None, persist_cookies=None):
         self.capabilities = {'browserName': browser_name.lower(), 'platform': platform.upper()}
-        if server_url:
-            self.command_executor = "http://{}:{}/wd/hub".format(server_url, server_port)
-        else:
-            self.command_executor = None
         self.window_size = window_size
         self.proxy = proxy
         if self.proxy:
@@ -37,9 +33,11 @@ class Webdriver:
                 {'proxyType': ProxyType.MANUAL, 'httpProxy': proxy, 'ftpProxy': proxy, 'sslProxy': proxy}
             )
             logger.debug('Browser is set to use a proxy server at {}'.format(self.proxy))
-        # self.driver = webdriver.Remote(desired_capabilities=self.capabilities, command_executor=self.command_executor,
-        #                                proxy=proxy)
-        if browser_name.lower() == 'chrome':
+        if server_url:
+            self.driver = webdriver.Remote(desired_capabilities=self.capabilities,
+                                           command_executor="http://{}:{}/wd/hub".format(server_url, server_port),
+                                           proxy=proxy)
+        elif browser_name.lower() == 'chrome':
             self.driver = webdriver.Chrome()
         elif browser_name.lower() == 'firefox':
             self.driver = webdriver.Firefox()
