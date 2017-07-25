@@ -1,4 +1,6 @@
 import logging
+import os
+from datetime import datetime
 
 from selenium import webdriver
 from selenium.webdriver.common.proxy import Proxy, ProxyType
@@ -37,6 +39,7 @@ class Webdriver:
             self.driver = webdriver.Remote(desired_capabilities=self.capabilities,
                                            command_executor="http://{}:{}/wd/hub".format(server_url, server_port),
                                            proxy=proxy)
+            logger.info("Running via remote server http://{}:{}/wd/hub".format(server_url, server_port))
         elif browser_name.lower() == 'chrome':
             self.driver = webdriver.Chrome()
         elif browser_name.lower() == 'firefox':
@@ -74,6 +77,24 @@ class Webdriver:
         else:
             self.driver.set_window_size(800, 600)
             logger.info("Browser window set to default '800x600'")
+
+    @staticmethod
+    def _create_directory_if_not_exists(dir_name):
+        """ Create a directory, if it does not already exist """
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+            logger.debug("Directory '{}' created".format(dir_name))
+
+    def get_screenshot(self, screenshot_path='screenshots', screenshot_filename_appender=None):
+        """ Create a screenshot (PNG image file) """
+        self._create_directory_if_not_exists(screenshot_path)
+        now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')
+        if screenshot_filename_appender:
+            screenshot_filename = '{}/{}_{}.png'.format(screenshot_path, now, screenshot_filename_appender)
+        else:
+            screenshot_filename = '{}/{}.png'.format(screenshot_path, now)
+        self.driver.get_screenshot_as_file("{}".format(screenshot_filename))
+        logger.info('Screenshot saved: {}'.format(screenshot_filename))
 
     def goto(self, url):
         """
@@ -601,7 +622,8 @@ class Webdriver:
         :param timeout: Int - The maximum amount of time to wait for the attribute (seconds)
         """
         logger.debug("Waiting for (CSS) '{}' to have {}={}".format(element_css, attribute, value))
-        return self._wait_for_attribute_value(self.driver.find_element_by_css_selector(element_css), attribute, value, timeout)
+        return self._wait_for_attribute_value(
+            self.driver.find_element_by_css_selector(element_css), attribute, value, timeout)
 
     def wait_for_value_by_id(self, element_id, value, timeout):
         """
@@ -641,7 +663,8 @@ class Webdriver:
         :param timeout: Int - The maximum amount of time to wait for the attribute (seconds)
         """
         logger.debug("Waiting for (CSS) '{}' to have value={}".format(element_css, value))
-        return self._wait_for_attribute_value(self.driver.find_element_by_css_selector(element_css), "value", value, timeout)
+        return self._wait_for_attribute_value(
+            self.driver.find_element_by_css_selector(element_css), "value", value, timeout)
 
     def _is_element_present(self, identifier_type, identifier_value):
         """
@@ -718,7 +741,8 @@ class Webdriver:
             if self._is_element_present(identifier_type, identifier_value):
                 return True
             sleep(1)
-        logger.warning("Element {}={} was not found within the timeout ({} seconds)".format(identifier_type, identifier_value, timeout))
+        logger.warning("Element {}={} was not found within the timeout ({} seconds)".format(
+            identifier_type, identifier_value, timeout))
         return False
 
     def wait_for_element_present_by_id(self, element_id, timeout=10):
@@ -785,7 +809,8 @@ class Webdriver:
                 logger.debug("Element {}={} no longer present".format(identifier_type, identifier_value))
                 return True
             sleep(1)
-        logger.warning("Element {}={} was present for the entire timeout ({} seconds)".format(identifier_type, identifier_value, timeout))
+        logger.warning("Element {}={} was present for the entire timeout ({} seconds)".format(
+            identifier_type, identifier_value, timeout))
         return False
 
     def wait_for_element_not_present_by_id(self, element_id, timeout=10):
@@ -906,8 +931,8 @@ class Webdriver:
         :param identifier_type: A selenium "By" object
         :param identifier_value: The value of the identifier to look for
         """
-        while not browser.driver.execute_script("if((window.innerHeight+window.scrollY)>=document.body.offsetHeight)"
-                                                "{return true;}else{return false}"):
+        while not self.driver.execute_script("if((window.innerHeight+window.scrollY)>=document.body.offsetHeight)"
+                                             "{return true;}else{return false}"):
             # While the browser is NOT scrolled to the bottom of the page
             if self._is_element_visible(identifier_type, identifier_value):
                 return True
@@ -973,7 +998,8 @@ class Webdriver:
         :param css_selector: String
         :return: Int
         """
-        logger.debug("Count of elements matching CSS '{}' is ".format(self.driver.find_elements_by_css_selector(css_selector)))
+        logger.debug("Count of elements matching CSS '{}' is ".format(
+            self.driver.find_elements_by_css_selector(css_selector)))
         return self.driver.find_elements_by_css_selector(css_selector)
 
     def _is_element_selected(self, identifier_type, identifier_value):
@@ -982,9 +1008,8 @@ class Webdriver:
         :param identifier_type: A selenium "By" object
         :param identifier_value: The value of the identifier to look for
         """
-        logger.debug("Element {}={} selection state is '{}'".format(identifier_type, identifier_value,
-                                                                    self.driver.find_element(identifier_type,
-                                                                                             identifier_value).is_selected()))
+        logger.debug("Element {}={} selection state is '{}'".format(
+            identifier_type, identifier_value, self.driver.find_element(identifier_type, identifier_value).is_selected()))
         return self.driver.find_element(identifier_type, identifier_value).is_selected()
 
     def is_element_selected_by_id(self, element_id):

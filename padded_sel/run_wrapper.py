@@ -28,8 +28,33 @@ class WebdriverBaseTest(unittest.TestCase):
     @read_browser_config("padded_sel.json")
     def setUpClass(cls, **kwargs):
         logger.debug(kwargs)
-        cls.driver = Webdriver(**kwargs)
+        cls.browser = Webdriver(**kwargs)
 
     @classmethod
     def tearDownClass(cls):
-        cls.driver.quit()
+        cls.browser.quit()
+
+    def run(self, result=None):
+        super(WebdriverBaseTest, self).run(TestResultEx(result, self))
+
+
+class TestResultEx(object):
+
+    def __init__(self, result, testcase):
+        self.result = result
+        self.testcase = testcase
+
+    def __getattr__(self, name):
+        return object.__getattribute__(self.result, name)
+
+    def _save_screenshot(self):
+        """ Check if screenshot directory exists, create it if necessary, then save screenshot, as required """
+        self.testcase.browser.get_screenshot(screenshot_filename_appender=self.testcase._testMethodName)
+
+    def addError(self, test, err):
+        self.result.addError(test, err)
+        self._save_screenshot()
+
+    def addFailure(self, test, err):
+        self.result.addFailure(test, err)
+        self._save_screenshot()
