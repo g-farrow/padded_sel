@@ -396,7 +396,7 @@ class Webdriver:
         Click on an element based on it's xpath
         :param xpath: String - the attribute value
         """
-        self.driver.find_element_by_id(xpath).click()
+        self.driver.find_element_by_xpath(xpath).click()
         logger.debug("Clicked xpath '{}'".format(xpath))
 
     def click_by_css(self, element_css):
@@ -412,7 +412,7 @@ class Webdriver:
         Click on an element based on it's 'name' attribute
         :param element_name: String - the attribute value
         """
-        self.driver.find_element_by_id(element_name).click()
+        self.driver.find_element_by_name(element_name).click()
         logger.debug("Clicked name={}".format(element_name))
 
     def click_by_link_text(self, link_text):
