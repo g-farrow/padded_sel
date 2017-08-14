@@ -58,6 +58,31 @@ class Webdriver:
         """
         self.driver.quit()
 
+    def get_cookie(self, name):
+        """
+        Get a cookie, by it's name
+        :param name: String - Name of the cookie to fetch
+        """
+        cookie = self.driver.get_cookie(name)
+        logger.debug("Fetched cookie '{}', it's content is: {}".format(name, cookie))
+        return cookie
+
+    def get_cookie_value(self, name):
+        """
+        Get a cookie's value, by it's name
+        :param name: String - Name of the cookie to fetch
+        """
+        cookie_value = self.driver.get_cookie(name)['value']
+        logger.debug("Fetched value ('{}') from cookie '{}'".format(cookie_value, name))
+        return cookie_value
+
+    def get_all_cookies(self):
+        """
+        Get all cookies in the session
+        """
+        logger.debug("Fetching all the cookies in the session")
+        return self.driver.get_cookies()
+
     def delete_all_cookies(self):
         """
         Remove all cookies from the running browser session
