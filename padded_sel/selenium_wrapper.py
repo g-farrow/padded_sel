@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime
+from time import sleep
 
 from selenium import webdriver
 from selenium.webdriver.common.proxy import Proxy, ProxyType
@@ -151,7 +152,6 @@ class Webdriver:
         Pause execution for the given number of seconds
         :param seconds: Int - Number of seconds (or part seconds)
         """
-        from time import sleep
         sleep(float(seconds))
         logger.debug("Paused for {} seconds. Continuing...".format(seconds))
 
@@ -193,6 +193,32 @@ class Webdriver:
             return True
         logger.debug("Test '{}' is NOT present on the page".format(text))
         return False
+
+    def wait_for_text_present(self, text, timeout=60):
+        """
+        Wait for given text to be present on the page
+        :param text: String - The text to wait for
+        :param timeout: Int - The number of seconds to wait for the text to appear
+        """
+        for x in range(timeout):
+            if self.is_text_present_on_page(text):
+                logger.debug("Text '{}' was found within {} seconds".format(text, x))
+                return True
+            sleep(1)
+        raise TimeoutError("Text '{}' could not be found in the specified timeout '{}'".format(text, timeout))
+
+    def wait_for_text_not_present(self, text, timeout=60):
+        """
+        Wait for given text to NO LONGER be present on the page
+        :param text: String - The text to look for
+        :param timeout: Int - The number of seconds to wait for the text to disappear
+        """
+        for x in range(timeout):
+            if not self.is_text_present_on_page(text):
+                logger.debug("Text '{}' was not present within {} seconds".format(text, x))
+                return True
+            sleep(1)
+        raise TimeoutError("Text '{}' could still be found after the specified timeout '{}'".format(text, timeout))
 
     def get_active_element(self):
         """
@@ -593,7 +619,6 @@ class Webdriver:
         :param value: String - the value of the attribute to wait for
         :param timeout: Int - The maximum amount of time to wait for the attribute (seconds)
         """
-        from time import sleep
         for i in range(int(timeout)):
             try:
                 if value in element.get_attribute(attribute):
@@ -761,7 +786,6 @@ class Webdriver:
         :param timeout: Int - The maximum amount of time to wait for the attribute (seconds)
         """
         logger.debug("Waiting for element {}={} to be present".format(identifier_type, identifier_value))
-        from time import sleep
         for i in range(int(timeout)):
             if self._is_element_present(identifier_type, identifier_value):
                 return True
@@ -826,7 +850,6 @@ class Webdriver:
         :param timeout: Int - The maximum amount of time to wait for the attribute (seconds)
         """
         logger.debug("Waiting for element {}={} to disappear".format(identifier_type, identifier_value))
-        from time import sleep
         for i in range(int(timeout)):
             try:
                 self.driver.find_element_by_id()
