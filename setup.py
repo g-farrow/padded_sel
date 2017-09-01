@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='padded_sel',
-      version='1.01',
+      version='1.2',
       description='Selenium Webdriver wrapper to make it easy to interact with page elements and handle failures in the way you want to.',
       url='https://github.com/g-farrow/padded_sel',
       author='Greg Farrow',

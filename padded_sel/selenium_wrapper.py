@@ -29,6 +29,8 @@ class Webdriver:
     def __init__(self, browser_name='firefox', platform='linux', server_url=None, server_port=4444, proxy=None,
                  window_size=None, persist_cookies=None):
         self.capabilities = {'browserName': browser_name.lower(), 'platform': platform.upper()}
+        if browser_name.lower() == 'firefox':
+            self.capabilities['marionette'] = True
         self.window_size = window_size
         self.proxy = proxy
         if self.proxy:
