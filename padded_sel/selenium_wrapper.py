@@ -273,7 +273,7 @@ class Webdriver:
         :param append: Boolean - If False then the element will have any existing text deleted first
         """
         if not append:
-            self.clear_content_by_xpath(element_css)
+            self.clear_content_by_css(element_css)
         self.driver.find_element_by_css_selector(element_css).send_keys(text)
         logger.debug("The phrase '{}' was sent to (CSS) '{}'".format(text, element_css))
 
@@ -305,7 +305,7 @@ class Webdriver:
         Remove the text from an element based on it's xpath
         :param element_xpath: String - the xpath value
         """
-        self.driver.find_element_by_name(element_xpath).clear()
+        self.driver.find_element_by_xpath(element_xpath).clear()
         logger.debug("Any existing text has been deleted from {}".format(element_xpath))
 
     def clear_content_by_css(self, element_css):
@@ -313,7 +313,7 @@ class Webdriver:
         Remove the text from an element based on it's CSS
         :param element_css: String - the CSS value
         """
-        self.driver.find_element_by_name(element_css).clear()
+        self.driver.find_element_by_css_selector(element_css).clear()
         logger.debug("Any existing text has been deleted from (CSS) '{}'".format(element_css))
 
     def get_text_by_id(self, element_id):
