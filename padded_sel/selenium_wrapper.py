@@ -27,7 +27,7 @@ class Webdriver:
     - :param persist_cookies: Boolean - Set to True to prevent deletion of existing cookies at startup of browser
     """
     def __init__(self, browser_name='firefox', platform='linux', server_url=None, server_port=4444, proxy=None,
-                 window_size=None, persist_cookies=None):
+                 window_size=None, persist_cookies=None, experimental_option=False):
         self.capabilities = {'browserName': browser_name.lower(), 'platform': platform.upper()}
         if browser_name.lower() == 'firefox':
             self.capabilities['marionette'] = True
@@ -44,7 +44,12 @@ class Webdriver:
                                            proxy=proxy)
             logger.info("Running via remote server http://{}:{}/wd/hub".format(server_url, server_port))
         elif browser_name.lower() == 'chrome':
-            self.driver = webdriver.Chrome()
+            if not experimental_option:
+                from selenium.webdriver.chrome.options import Options as ChromeOptions
+                options = ChromeOptions().add_experimental_option("useAutomationExtension", False)
+                self.driver = webdriver.Chrome(options=options)
+            else:
+                self.driver = webdriver.Chrome()
         elif browser_name.lower() == 'firefox':
             self.driver = webdriver.Firefox()
         else:
